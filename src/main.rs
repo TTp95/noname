@@ -15,19 +15,6 @@ impl TwitchMsg {
 
 #[tokio::main]
 async fn main() -> irc::error::Result<()> {
-    //Oauth Token
-    //let oauth_token = "oauth:yg7ujx082bts5m3oj23xsh1w0bldbm".to_string();
-
-    //Config from hand write vars
-    //let config = Config {
-        //nickname: Some("ttp95".to_owned()),
-        //server: Some("irc.chat.twitch.tv".to_owned()),
-        //password: Some(oauth_token),
-        //channels: vec!["#haroichi".to_owned()],
-        //..Default::default()
-    //};
-    //let mut client = Client::from_config(config).await?;
-
     //Config from toml
     let mut client = Client::new("twitch.config.toml").await?;
 
