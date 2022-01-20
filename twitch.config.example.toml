@@ -1,0 +1,4 @@
+nickname = "user"
+password = "oauth:xxxx"
+channels = ["#channel"]
+server = "irc.chat.twitch.tv"
