@@ -116,8 +116,19 @@ fn check_end(guess_word: &mut GuessingGame) -> bool {
 #[tokio::main]
 async fn main() -> irc::error::Result<()> {
 
+    //read scores from last game if exist
+    let file = File::open("output/scores.json");
+    let mut score_book : HashMap<String, usize> = if let Ok(mut score_file) = file  {
+        let mut data = String::new();
+        score_file.read_to_string(&mut data).unwrap();
+        serde_json::from_str(&data).expect("JSON was not well-formatted")
+
+    } else {
+        HashMap::new()
+    };
+
     // HashMap
-    let mut score_book : HashMap<String, usize> = HashMap::new();
+    //let mut score_book : HashMap<String, usize> = HashMap::new();
 
     //Config from toml
     let mut client = Client::new("twitch.config.toml").await?;
@@ -125,10 +136,6 @@ async fn main() -> irc::error::Result<()> {
     client.identify()?;
 
     let mut stream = client.stream()?;
-
-    //let mut twitch_msg = Vec::<TwitchMsg>::new();
-
-    //let mut counter: usize = 0;
 
     let twitch_command = "&".to_owned();
 
@@ -221,31 +228,6 @@ async fn main() -> irc::error::Result<()> {
                                 break;
                             }
 
-
-                            ////create a TwitchMsg and push it to the Vec<TwitchMsg>
-                            //twitch_msg.push( TwitchMsg::new( user_nickname.to_owned(), msg[4..].to_owned() ) );
-                            ////print Msg vector to screen
-                            //println!("{:#?}", &twitch_msg);
-
-                            ////generate a JSON String
-                            //let json = serde_json::to_string(&TwitchMsg::new(user_nickname.to_owned(), msg[4..].to_owned()));
-
-                            //counter += 1;
-
-                            //manage json error
-                            //match json {
-                                //Ok(json_string) => {
-                                    ////format file name
-                                    //let file_name = format!("output/{counter:0>7}.json");
-                                    ////print json to screen
-                                    //println!("file: {file_name} -> {json_string:#?}");
-                                    ////save JSON file
-                                    //let mut json_file = File::create(Path::new(&file_name))?;
-                                    //json_file.write_all(&json_string.as_bytes())?;
-                                //}
-
-                                //_ => (),
-                            //}
                         }
                     }
                 }
