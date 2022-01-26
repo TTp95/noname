@@ -5,7 +5,6 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
-//use std::ascii::AsciiExt;
 
 #[derive(Debug)]
 pub struct GuessingGame {
@@ -111,6 +110,27 @@ fn check_end(guess_word: &mut GuessingGame) -> bool {
     } else {
         false
     }
+}
+
+fn save_scores(score_book: HashMap<String, usize>) {
+    //generate a JSON String
+    let json = serde_json::to_string(&score_book);
+
+    //manage json error
+    match json {
+        Ok(json_string) => {
+            //format file name
+            let file_name = format!("output/scores.json");
+            //print json to screen
+            println!("file: {file_name} -> {json_string:#?}");
+            //save JSON file
+            let mut json_file = File::create(Path::new(&file_name)).unwrap();
+            json_file.write_all(&json_string.as_bytes()).unwrap();
+        },
+
+        _ => (),
+    };
+
 }
 
 #[tokio::main]
@@ -237,23 +257,7 @@ async fn main() -> irc::error::Result<()> {
         }
     }
 
-    //generate a JSON String
-    let json = serde_json::to_string(&score_book);
-
-    //manage json error
-    match json {
-        Ok(json_string) => {
-            //format file name
-            let file_name = format!("output/scores.json");
-            //print json to screen
-            println!("file: {file_name} -> {json_string:#?}");
-            //save JSON file
-            let mut json_file = File::create(Path::new(&file_name))?;
-            json_file.write_all(&json_string.as_bytes())?;
-        }
-
-        _ => (),
-    }
+    save_scores(score_book);
 
     Ok(())
 }
